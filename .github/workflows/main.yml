@@ -33,7 +33,7 @@ jobs:
         run: php -S 127.0.0.1:8000 -t src/ &
 
       - name: Wait for Server
-        run: sleep 5
+        run: sleep 10
       - name: Run Selenium Tests
         # Exécute ton script de test (ex: tests/SeleniumTest.php)
         run: php vendor/bin/phpunit tests/SeleniumTest.php
