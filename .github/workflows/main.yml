@@ -1,30 +1,58 @@
 name: CI/CD Docker PHP
 
-# Déclenchement lors d'un push sur la branche main
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-  build-and-push:
+  # --- NOUVEAU JOB DE TEST ---
+  test-selenium:
     runs-on: ubuntu-latest
+    services:
+      # Lance un container Selenium Chrome pour les tests
+      selenium:
+        image: selenium/standalone-chrome:latest
+        ports:
+          - 4444:4444
 
     steps:
-      # 1. Checkout du code
       - name: Checkout du code
         uses: actions/checkout@v4
 
-      # 2. Connexion à Docker Hub
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, dom, curl
+
+      - name: Install Dependencies
+        run: composer install
+
+      - name: Run PHP Server
+        # Lance ton app en arrière-plan pour que Selenium puisse y accéder
+        run: php -S localhost:8000 -t src/ & 
+
+      - name: Run Selenium Tests
+        # Exécute ton script de test (ex: tests/SeleniumTest.php)
+        run: php vendor/bin/phpunit tests/SeleniumTest.php
+
+  # --- TON JOB ACTUEL (Modifié) ---
+  build-and-push:
+    needs: test-selenium # S'assure que le push ne se fait QUE si les tests réussissent
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
       - name: Connexion à Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }} 
-          password: ${{ secrets.DOCKERHUB_TOKEN }} 
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 3. Build et Push de l'image
       - name: Build et Push de l'image Docker
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: true 
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/projet-php:latest 
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/projet-php:latest
