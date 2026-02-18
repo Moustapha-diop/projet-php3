@@ -10,8 +10,10 @@ use Facebook\WebDriver\WebDriverBy;
 class SeleniumTest extends TestCase
 {
     protected $driver;
-    protected $baseUrl = 'http://127.0.0.1:8000';
+    // protected $baseUrl = 'http://127.0.0.1:8000';
 
+// Après (pour GitHub Actions / Docker)
+    protected $baseUrl = 'http://host.docker.internal:8000';
     // Cette fonction s'exécute AVANT chaque test
     protected function setUp(): void
     {

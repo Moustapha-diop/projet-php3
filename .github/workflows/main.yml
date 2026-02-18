@@ -30,7 +30,7 @@ jobs:
 
       - name: Run PHP Server
         # Lance ton app en arrière-plan pour que Selenium puisse y accéder
-        run: php -S 127.0.0.1:8000 -t src/ &
+        run: php -S 0.0.0.0:8000 -t src/ &
 
       - name: Wait for Server
         run: sleep 10
