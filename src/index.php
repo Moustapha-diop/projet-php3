@@ -6,6 +6,7 @@
 </head>
 <body>
     <h1 id="main-title">Bienvenue sur mon projet Docker</h1>
+    <h1 id="main-title">Bienvenue </h1>
     <p class="description">Ceci est une application testée par Selenium.</p>
     
     <img src="1.png" alt="Image de test" id="logo">
