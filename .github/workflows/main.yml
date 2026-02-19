@@ -27,7 +27,7 @@ jobs:
           docker run -d --name selenium --network host selenium/standalone-chrome:latest
           
       - name: Run PHP Server
-        run: php -S 0.0.0.0:8000 -t . & 
+        run: php -S 0.0.0.0:8000 -t src/ & 
 
       - name: Wait for services
         run: sleep 10
