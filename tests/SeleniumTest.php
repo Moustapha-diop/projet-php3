@@ -46,6 +46,24 @@ class SeleniumTest extends TestCase
         $this->assertStringContainsString('1.png', $image->getAttribute('src'));
     }
 
+    public function testContactButtonAlert()
+    {
+        $this->driver->get($this->baseUrl);
+
+        // 1. Trouver le bouton par son ID et cliquer dessus
+        $this->driver->findElement(WebDriverBy::id('btn-contact'))->click();
+
+        // 2. Attendre que l'alerte apparaisse et récupérer son texte
+        $alert = $this->driver->switchTo()->alert();
+        $alertText = $alert->getText();
+
+        // 3. Vérifier que le texte est le bon
+        $this->assertEquals('Contact cliqué !', $alertText);
+
+        // 4. Fermer l'alerte (indispensable pour que Selenium puisse continuer)
+        $alert->accept();
+    }
+
     // --- TES TESTS S'ARRÊTENT ICI ---
 
     // Cette fonction s'exécute APRÈS chaque test
