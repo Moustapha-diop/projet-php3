@@ -8,13 +8,6 @@ jobs:
   # --- JOB DE TEST ---
   test-selenium:
     runs-on: ubuntu-latest
-    
-    services:
-      # On lance Selenium avec l'option --network host
-      selenium:
-        image: selenium/standalone-chrome:latest
-        options: --network host
-
     steps:
       - name: Checkout du code
         uses: actions/checkout@v4
@@ -28,17 +21,19 @@ jobs:
       - name: Install Dependencies
         run: composer install
 
+      - name: Run Selenium in Docker
+        # On lance le container manuellement en arrière-plan avec --network host
+        run: |
+          docker run -d --name selenium --network host selenium/standalone-chrome:latest
+          
       - name: Run PHP Server
-        # On lance le serveur sur le port 8000
         run: php -S 0.0.0.0:8000 -t . & 
 
-      - name: Wait for Server
-        # On attend un peu que le serveur soit prêt
-        run: sleep 5
+      - name: Wait for services
+        run: sleep 10
 
       - name: Run Selenium Tests
         run: php vendor/bin/phpunit tests/SeleniumTest.php
-
   # --- JOB DE BUILD ET PUSH ---
   build-and-push:
     needs: test-selenium

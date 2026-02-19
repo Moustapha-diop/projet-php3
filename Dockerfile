@@ -11,6 +11,7 @@ RUN a2enmod rewrite
 # 3. Copie de ton code source dans le dossier par défaut d'Apache
 # Note : Si ton code est dans un dossier 'src/', on copie son CONTENU
 COPY src/ /var/www/html/
+COPY *.png /var/www/html/
 
 # 4. Ajustement des permissions (évite les erreurs d'écriture de fichiers)
 RUN chown -R www-data:www-data /var/www/html
