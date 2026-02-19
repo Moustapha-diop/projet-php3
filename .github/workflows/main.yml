@@ -5,15 +5,15 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # --- NOUVEAU JOB DE TEST ---
+  # --- JOB DE TEST ---
   test-selenium:
     runs-on: ubuntu-latest
+    
     services:
-      # Lance un container Selenium Chrome pour les tests
+      # On lance Selenium avec l'option --network host
       selenium:
         image: selenium/standalone-chrome:latest
-        ports:
-          - 4444:4444
+        options: --network host
 
     steps:
       - name: Checkout du code
@@ -29,18 +29,19 @@ jobs:
         run: composer install
 
       - name: Run PHP Server
-        # Lance ton app en arrière-plan pour que Selenium puisse y accéder
-        run: php -S 0.0.0.0:8000 -t src/ &
+        # On lance le serveur sur le port 8000
+        run: php -S 0.0.0.0:8000 -t . & 
 
       - name: Wait for Server
+        # On attend un peu que le serveur soit prêt
         run: sleep 5
+
       - name: Run Selenium Tests
-        # Exécute ton script de test (ex: tests/SeleniumTest.php)
         run: php vendor/bin/phpunit tests/SeleniumTest.php
 
-  # --- TON JOB ACTUEL (Modifié) ---
+  # --- JOB DE BUILD ET PUSH ---
   build-and-push:
-    needs: test-selenium # S'assure que le push ne se fait QUE si les tests réussissent
+    needs: test-selenium
     runs-on: ubuntu-latest
     steps:
       - name: Checkout du code
